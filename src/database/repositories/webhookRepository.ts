@@ -2,7 +2,7 @@ import { Model } from "mongoose";
 import { IWebhookModel } from "../entities/webhook-entity";
 
 export interface IWebhookRepository {
-  save(data: IWebhookModel): Promise<void>;
+  save(data: Omit<IWebhookModel, "_id">): Promise<void>;
 }
 
 export class WebhookRepository implements IWebhookRepository {
