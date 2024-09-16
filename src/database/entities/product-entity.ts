@@ -1,13 +1,21 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-export const OportunitySchema = new mongoose.Schema({
-  id: String,
+export interface IProductModel {
+  _id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export const ProductSchema: { [key in keyof IProductModel]: any } = {
+  _id: Schema.ObjectId,
   name: String,
-  teste: Number,
-});
+  price: Number,
+  quantity: Number,
+};
 
-export const makeOportunityModel = () => {
-  const OportunityModel = mongoose.model("Oportunity", OportunitySchema);
+export const makeProductModel = () => {
+  const ProductModel = mongoose.model("Product", new Schema(ProductSchema));
 
-  return OportunityModel;
+  return ProductModel;
 };

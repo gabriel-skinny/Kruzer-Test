@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IWebhookModel {
+  _id: string;
   name: string;
   type: string;
   direction: "in" | "out";
@@ -8,6 +9,7 @@ export interface IWebhookModel {
 }
 
 export const webhookSchema: { [key in keyof IWebhookModel]: any } = {
+  _id: Schema.ObjectId,
   name: String,
   type: String,
   direction: String,
@@ -15,7 +17,10 @@ export const webhookSchema: { [key in keyof IWebhookModel]: any } = {
 };
 
 export const makeWebhookModel = () => {
-  const WebhookModel = mongoose.model<IWebhookModel>("Webhook");
+  const WebhookModel = mongoose.model<IWebhookModel>(
+    "Webhook",
+    new Schema(webhookSchema)
+  );
 
   return WebhookModel;
 };
