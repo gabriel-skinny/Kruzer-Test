@@ -1,37 +1,33 @@
+import { IProductModel } from "../database/entities/product-entity";
+import { IProductRepository } from "../database/repositories/productRepository";
 import { IInsertProductData } from "../integration/interface";
+
+interface IInsertProductParams {
+  price: number;
+  name: string;
+  quantity: number;
+}
 
 interface IBlingHttp {
   requestInsertProduct(data: IInsertProductData): Promise<void>;
 }
 
-interface IInsertProductParams {
-  value: number;
-  name: string;
+export interface IBillingService {
+  insertProduct(data: IInsertProductParams): Promise<void>;
 }
 
-interface IProductRepository {
-  save(any: any): Promise<void>;
-}
-
-interface IDefaultProductInfoRepository {
-  findLast(): Promise<any>;
-}
-
-export class BlingService {
+export class BlingService implements IBillingService {
   constructor(
     private BlingHttp: IBlingHttp,
-    private productRepository: IProductRepository,
-    private defaultProductInfoRepository: IDefaultProductInfoRepository
+    private productRepository: IProductRepository
   ) {}
 
-  async insertProduct(data: IInsertProductParams) {
-    const lastDefaultProductInfo =
-      await this.defaultProductInfoRepository.findLast();
+  async insertProduct({ name, price, quantity }: IInsertProductParams) {
+    await this.BlingHttp.requestInsertProduct({
+      nome: name,
+      preco: price,
+    });
 
-    const requestData = Object.assign({}, data, lastDefaultProductInfo);
-
-    await this.BlingHttp.requestInsertProduct(requestData);
-
-    await this.productRepository.save(requestData);
+    await this.productRepository.save({ name, price, quantity });
   }
 }
