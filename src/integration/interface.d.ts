@@ -12,7 +12,7 @@ interface IDefault {
 }
 
 export interface IInsertProductData {
-  id: number;
+  id?: number;
   nome: string;
   codigo?: string;
   preco: number;
@@ -21,7 +21,7 @@ export interface IInsertProductData {
   formato?: string;
   descricaoCurta?: string;
   dataValidade?: string;
-  unidade: string;
+  unidade?: string;
   pesoLiquido?: number;
   pesoBruto?: number;
   volumes?: number;

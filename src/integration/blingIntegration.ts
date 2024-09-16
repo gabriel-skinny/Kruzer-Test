@@ -23,7 +23,7 @@ export class BlingIntegration {
     this.basicToken = `${process.env.BLING_CLIENT_ID}:${process.env.BLING_CLIENT_SECRET}`;
   }
 
-  async makeAuthorization(): Promise<{ authorized: boolean }> {
+  async checkAuthorization(): Promise<{ authorized: boolean }> {
     if (this.autentication) {
       if (isAfter(this.autentication.acessTokenExpireDate, Date.now())) {
         return { authorized: true };
@@ -40,8 +40,6 @@ export class BlingIntegration {
 
         return { authorized: true };
       }
-    } else {
-      await this.requestAuthorizationCode();
     }
 
     return { authorized: false };
@@ -73,12 +71,12 @@ export class BlingIntegration {
     };
   }
 
-  async requestAuthorizationCode() {
+  makeAuthorizationCodeUrl(): { authorizationCodeUrl: string } {
     this.authorizationState = randomUUID();
 
-    await axios.get(
-      `${process.env.BLING_PROD_URL}/Api/v3/oauth/authorize?response_type=code&client_id=${process.env.BLING_CLIENT_ID}&state=${this.authorizationState}`
-    );
+    const authorizationCodeUrl = `${process.env.BLING_PROD_URL}/Api/v3/oauth/authorize?response_type=code&client_id=${process.env.BLING_CLIENT_ID}&state=${this.authorizationState}`;
+
+    return { authorizationCodeUrl };
   }
 
   async requestAcessToken(
@@ -104,17 +102,15 @@ export class BlingIntegration {
   }
 
   async requestInsertProduct(productData: IInsertProductData) {
-    const authorized = await this.makeAuthorization();
+    const authorized = await this.checkAuthorization();
 
-    const insertProductRequest = () => {
-      axios.post(`${process.env.BLING_PROD_BASE_URL}/API`, productData, {
-        headers: {
-          Authorization: `Bearer ${this.autentication?.acessToken}`,
-        },
-      });
-    };
+    if (!authorized)
+      throw new Error("Can not make request because not authorized");
 
-    if (!authorized) setInterval(insertProductRequest, 5000);
-    else insertProductRequest();
+    axios.post(`${process.env.BLING_PROD_BASE_URL}/API`, productData, {
+      headers: {
+        Authorization: `Bearer ${this.autentication?.acessToken}`,
+      },
+    });
   }
 }
