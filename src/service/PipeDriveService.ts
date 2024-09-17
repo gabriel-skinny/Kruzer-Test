@@ -1,4 +1,4 @@
-import { IWebhookRepository } from "../database/repositories/webhookRepository";
+import { IPipeDriveWebhookRepository } from "../database/repositories/pipeDriveWebhookRepository";
 import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
 import { IInsertProductParams } from "./ProductService";
 
@@ -8,7 +8,7 @@ interface IProductService {
 
 export class PipeDriveService {
   constructor(
-    private webhookRepository: IWebhookRepository,
+    private pipedriveWebhookRepository: IPipeDriveWebhookRepository,
     private productService: IProductService
   ) {}
 
@@ -17,25 +17,62 @@ export class PipeDriveService {
     meta,
     previous,
   }: IWebhookDealUpdateData) {
-    if (meta.action !== "change") throw new Error("Not suported event");
+    if (meta.action !== "change") throw new Error("Not suported action");
 
-    if (await this.webhookRepository.existsByExternalId(meta.id))
+    if (await this.pipedriveWebhookRepository.existsByExternalId(meta.id))
       throw new Error("Duplicated webhook");
 
-    await this.webhookRepository.save({
+    let errorCreatingProduct = false;
+    if (data.status == "won" && previous.status == "open") {
+      try {
+        await this.productService.insertProduct({
+          name: data.title,
+          quantity: data.products_count,
+          price: data.value,
+        });
+      } catch (error) {
+        errorCreatingProduct = true;
+      }
+    }
+
+    await this.pipedriveWebhookRepository.save({
       data,
-      direction: "in",
-      name: "PipeDrive",
-      type: "updateDeal",
+      type: "changeDeal",
+      errorOnProductCreation: errorCreatingProduct,
       webhook_external_id: meta.id,
     });
+  }
 
-    if (data.status == "won" && previous.status == "open") {
-      await this.productService.insertProduct({
-        name: data.title,
-        quantity: data.products_count,
-        price: data.value,
-      });
+  async retryProductCreation(): Promise<{
+    webhooksToRetry: number;
+    sucessCount: number;
+  }> {
+    const webhooksToRetry =
+      await this.pipedriveWebhookRepository.findManyWithErrorOnProductCreation();
+
+    let sucessCount = 0;
+    for (const webhook of webhooksToRetry) {
+      try {
+        await this.productService.insertProduct({
+          name: webhook.data.title,
+          quantity: webhook.data.products_count,
+          price: webhook.data.value,
+        });
+
+        await this.pipedriveWebhookRepository.updateById({
+          id: webhook._id,
+          updateData: { errorOnProductCreation: false },
+        });
+
+        sucessCount++;
+      } catch (error) {
+        console.log(error);
+      }
     }
+
+    return {
+      sucessCount,
+      webhooksToRetry: webhooksToRetry.length,
+    };
   }
 }

@@ -8,18 +8,21 @@ export const router = Router();
 const { blingController, pipeDriveController, productController } =
   makeControllersFactory();
 
-router.get("/bling/authorize", blingController.authorize.bind(blingController));
+router.get(
+  "/bling/request-authorization-code",
+  blingController.requestAuthorizationCode.bind(blingController)
+);
+
+router.post(
+  "/webhook/bling/authorization-code/callback",
+  authorizationMidleware,
+  blingController.authorizationCodeCallBack.bind(blingController)
+);
 
 router.post(
   "/webhook/pipe-drive/webhook-deal-update",
   authorizationMidleware,
   pipeDriveController.webookDealUpdate.bind(pipeDriveController)
-);
-
-router.post(
-  "/webhook/bling/authorization-code",
-  authorizationMidleware,
-  blingController.getAuthorizationCode.bind(blingController)
 );
 
 router.get(
