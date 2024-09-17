@@ -12,7 +12,7 @@ export function authorizationMidleware(
   next: NextFunction
 ) {
   if (!req.headers.authorization) {
-    return res.json({ message: "Unauthorized" }).status(401);
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
@@ -26,6 +26,6 @@ export function authorizationMidleware(
     next();
   } catch (error) {
     console.log(error);
-    return res.json({ message: "Unauthorized" }).status(401);
+    return res.status(401).json({ message: "Unauthorized" });
   }
 }
