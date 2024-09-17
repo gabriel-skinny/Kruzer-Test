@@ -1,10 +1,10 @@
 export interface IWebhookDealUpdateData {
   meta: {
-    action: "added" | "updated" | "merged" | "deleted";
+    action: "add" | "merge" | "delete" | "change";
     change_source: string;
     company_id: number;
     host: string;
-    id: number;
+    id: string;
     is_bulk_update: boolean;
     matches_filters: { current: [] };
     object: string;
@@ -18,7 +18,7 @@ export interface IWebhookDealUpdateData {
     v: number;
     webhook_id: string;
   };
-  current: {
+  data: {
     email_messages_count: number;
     cc_email: string;
     channel?: string;
@@ -58,7 +58,7 @@ export interface IWebhookDealUpdateData {
     next_activity_time?: string;
     channel_id?: string;
     formatted_value: string;
-    status: string;
+    status: "won" | "open";
     formatted_weighted_value: string;
     mrr_currency?: string;
     first_won_time?: string;
