@@ -1,21 +1,29 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
+import { RequestMidleware } from "../midlewares/authorization-midleware";
+
+interface IPipeDriveService {
+  handleUpdateDealEvent(data: IWebhookDealUpdateData): Promise<void>;
+}
 
 export class PipeDriveController {
-  static async webookDealUpdate(req: Request, res: Response) {
-    const user = req.headers.username;
-    const password = req.headers.password;
-    const body = req.body as IWebhookDealUpdateData;
+  constructor(private pipeDriveService: IPipeDriveService) {}
 
-    if (!user || !password) throw new Error("Unauthorized");
+  async webookDealUpdate(req: RequestMidleware, res: Response) {
+    const body = req.body;
 
     if (
-      user !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_USERNAME ||
-      password !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_PASSWORD
+      req.username !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_USERNAME ||
+      req.password !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_PASSWORD
     )
-      throw new Error("Unauthorized");
+      return res.json({ message: "Unauthorized" }).status(401);
 
-    if (body.meta.action !== "updated" || body.event !== "updated.deal")
-      throw new Error("Not suported event");
+    try {
+      await this.pipeDriveService.handleUpdateDealEvent(body);
+    } catch (err) {
+      console.log(err);
+
+      return res.json({ message: "Internal server error" }).status(500);
+    }
   }
 }
