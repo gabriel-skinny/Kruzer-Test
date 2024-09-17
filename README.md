@@ -4,7 +4,10 @@ Integração entre Api do PipeDrive para inserir Deals quando estiverem ganhas c
 
 ## Requirements
 
-- Usuario consegue alterar
+- Receber atualizações de status de Deals da Plataforma PipeDrive
+- Enviar os deals com status Ganho como produto na Plataforma Bling
+- Agregar o valor dos Produtos inseridos por dia
+- Rota para pegar o valor agregado dos produtos
 
 ## Rotas
 
