@@ -5,6 +5,7 @@ export interface IProductModel {
   name: string;
   price: number;
   quantity: number;
+  externalId: string;
 }
 
 export const ProductSchema: { [key in keyof IProductModel]: any } = {
@@ -12,10 +13,10 @@ export const ProductSchema: { [key in keyof IProductModel]: any } = {
   name: String,
   price: Number,
   quantity: Number,
+  externalId: String,
 };
 
-export const makeProductModel = () => {
-  const ProductModel = mongoose.model("Product", new Schema(ProductSchema));
-
-  return ProductModel;
-};
+export const ProductModel = mongoose.model(
+  "Product",
+  new Schema(ProductSchema)
+);

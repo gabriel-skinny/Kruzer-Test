@@ -16,11 +16,7 @@ export const webhookSchema: { [key in keyof IWebhookModel]: any } = {
   data: Object,
 };
 
-export const makeWebhookModel = () => {
-  const WebhookModel = mongoose.model<IWebhookModel>(
-    "Webhook",
-    new Schema(webhookSchema)
-  );
-
-  return WebhookModel;
-};
+export const WebhookModel = mongoose.model<IWebhookModel>(
+  "Webhook",
+  new Schema(webhookSchema)
+);
