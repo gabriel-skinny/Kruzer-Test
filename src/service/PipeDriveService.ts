@@ -1,28 +1,41 @@
 import { IWebhookRepository } from "../database/repositories/webhookRepository";
 import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
-import { IBillingService } from "./BlingService";
+import { IInsertProductParams } from "./ProductService";
+
+interface IProductService {
+  insertProduct(data: IInsertProductParams): Promise<void>;
+}
 
 export class PipeDriveService {
   constructor(
     private webhookRepository: IWebhookRepository,
-    private blingService: IBillingService
+    private productService: IProductService
   ) {}
 
-  async handleUpdateDealEvent(data: IWebhookDealUpdateData) {
-    if (data.meta.action !== "updated" || data.event !== "updated.deal")
-      throw new Error("Not suported event");
+  async handleUpdateDealEvent({
+    data,
+    meta,
+    previous,
+  }: IWebhookDealUpdateData) {
+    if (meta.action !== "change") throw new Error("Not suported event");
+
+    if (await this.webhookRepository.existsByExternalId(meta.id))
+      throw new Error("Duplicated webhook");
 
     await this.webhookRepository.save({
       data,
       direction: "in",
       name: "PipeDrive",
       type: "updateDeal",
+      webhook_external_id: meta.id,
     });
 
-    await this.blingService.insertProduct({
-      name: data.current.title,
-      quantity: data.current.products_count,
-      price: data.current.value,
-    });
+    if (data.status == "won" && previous.status == "open") {
+      await this.productService.insertProduct({
+        name: data.title,
+        quantity: data.products_count,
+        price: data.value,
+      });
+    }
   }
 }
