@@ -2,7 +2,6 @@ import express, { Express, Router } from "express";
 import "dotenv/config";
 import { router } from "./routes";
 import { makeMongoConnection } from "./database/connection";
-import mongoose from "mongoose";
 
 class Server {
   app: Express;
