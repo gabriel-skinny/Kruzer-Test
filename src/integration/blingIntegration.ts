@@ -1,7 +1,11 @@
 import axios from "axios";
 import { randomUUID } from "crypto";
 import { addDays, addSeconds, isAfter, isBefore } from "date-fns";
-import { IInsertProductData, IRequestAcesseTokenResponse } from "./interface";
+import {
+  IInsertProductData,
+  IInsertProductResponse,
+  IRequestAcesseTokenResponse,
+} from "./interface";
 
 const EXPIRES_IN_DAYS_REFRESH_TOKEN = 30;
 
@@ -109,8 +113,8 @@ export class BlingIntegration {
     if (!authorized)
       throw new Error("Can not make request because not authorized");
 
-    const response = await axios.post(
-      `${process.env.BLING_PROD_BASE_URL}/API`,
+    const response = await axios.post<IInsertProductResponse>(
+      `${process.env.BLING_PROD_BASE_URL}/Api/v3/produtos`,
       productData,
       {
         headers: {
@@ -119,6 +123,6 @@ export class BlingIntegration {
       }
     );
 
-    return { id: response.data.id };
+    return { id: String(response.data.data.id) };
   }
 }
