@@ -2,6 +2,7 @@ import express, { Express, Router } from "express";
 import "dotenv/config";
 import { router } from "./routes";
 import { makeMongoConnection } from "./database/connection";
+import bodyParser from "body-parser";
 
 class Server {
   app: Express;
@@ -11,14 +12,19 @@ class Server {
 
   async start() {
     await this.makeDatabaseConnection();
-    this.listen();
+    this.config();
     this.addRoutes();
+    this.listen();
   }
 
   listen() {
     this.app.listen(process.env.PORT, () => {
       console.log(`App running on Port: ${process.env.PORT}`);
     });
+  }
+
+  config() {
+    this.app.use(bodyParser.json());
   }
 
   addRoutes() {
