@@ -101,16 +101,24 @@ export class BlingIntegration {
     return data;
   }
 
-  async requestInsertProduct(productData: IInsertProductData) {
+  async requestInsertProduct(
+    productData: IInsertProductData
+  ): Promise<{ id: string }> {
     const authorized = await this.checkAuthorization();
 
     if (!authorized)
       throw new Error("Can not make request because not authorized");
 
-    axios.post(`${process.env.BLING_PROD_BASE_URL}/API`, productData, {
-      headers: {
-        Authorization: `Bearer ${this.autentication?.acessToken}`,
-      },
-    });
+    const response = await axios.post(
+      `${process.env.BLING_PROD_BASE_URL}/API`,
+      productData,
+      {
+        headers: {
+          Authorization: `Bearer ${this.autentication?.acessToken}`,
+        },
+      }
+    );
+
+    return { id: response.data.id };
   }
 }
