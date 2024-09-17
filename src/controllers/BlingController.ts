@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
 import { RequestMidleware } from "../midlewares/authorization-midleware";
 
 interface IBlingIntegration {
@@ -18,17 +17,28 @@ export class BlingController {
   }
 
   async getAuthorizationCode(req: RequestMidleware, res: Response) {
-    const { code, state } = req.params;
+    const { code, state } = req.query;
+
+    if (!code || !state)
+      return res.status(401).json({ message: "Unauthorized" });
 
     if (
-      req.username != process.env.BLING_CLIENT_USERNAME ||
-      req.password != process.env.BLING_CLIENT_PASSWORD
+      req.username != process.env.BLING_CLIENT_ID ||
+      req.password != process.env.BLING_CLIENT_SECRET
     )
-      return res.json({ message: "Unauthorized" }).status(401);
+      return res.status(401).json({ message: "Unauthorized" });
 
-    await this.blingIntegration.authorizationCallBack({
-      code: code,
-      state: state,
-    });
+    try {
+      await this.blingIntegration.authorizationCallBack({
+        code: code as string,
+        state: state as string,
+      });
+
+      return res.status(200).json({ message: "Authorized successfully" });
+    } catch (error) {
+      console.log(error);
+
+      return res.json({ error: "Internal server error" }).status(200);
+    }
   }
 }
