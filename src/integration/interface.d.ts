@@ -6,9 +6,12 @@ export interface IRequestAcesseTokenResponse {
   refresh_token: string;
 }
 
-interface IDefault {
-  numeroLoja: "123";
-  dataPrevista: string;
+export interface IInsertProductResponse {
+  data: {
+    id: number;
+    variations?: Object;
+    warnings: Array<Object>;
+  };
 }
 
 export interface IInsertProductData {
@@ -16,9 +19,9 @@ export interface IInsertProductData {
   nome: string;
   codigo?: string;
   preco: number;
-  tipo?: string;
+  tipo: "P" | "S" | "N";
   situacao?: string;
-  formato?: string;
+  formato: "E" | "V" | "S";
   descricaoCurta?: string;
   dataValidade?: string;
   unidade?: string;
