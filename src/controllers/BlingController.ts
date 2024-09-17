@@ -9,14 +9,14 @@ interface IBlingIntegration {
 export class BlingController {
   constructor(private blingIntegration: IBlingIntegration) {}
 
-  async authorize(req: Request, res: Response) {
+  async requestAuthorizationCode(req: Request, res: Response) {
     const { authorizationCodeUrl } =
       this.blingIntegration.makeAuthorizationCodeUrl();
 
     res.redirect(authorizationCodeUrl);
   }
 
-  async getAuthorizationCode(req: RequestMidleware, res: Response) {
+  async authorizationCodeCallBack(req: RequestMidleware, res: Response) {
     const { code, state } = req.query;
 
     if (!code || !state)
