@@ -1,39 +1,28 @@
 import { Router } from "express";
-import { PipeDriveController } from "./controllers/PipeDriveController";
-import { BlingController } from "./controllers/BlingController";
-import { BlingIntegration } from "./integration/blingIntegration";
-import { PipeDriveService } from "./service/PipeDriveService";
-import { WebhookRepository } from "./database/repositories/webhookRepository";
 
-import { BlingService } from "./service/BlingService";
-import { ProductRepository } from "./database/repositories/productRepository";
-import { ProductModel } from "./database/entities/product-entity";
-import { WebhookModel } from "./database/entities/webhook-entity";
+import { makeControllersFactory } from "./main";
 import { authorizationMidleware } from "./midlewares/authorization-midleware";
 
 export const router = Router();
 
-const blingIntegration = new BlingIntegration();
+const { blingController, pipeDriveController, productController } =
+  makeControllersFactory();
 
-const productRepository = new ProductRepository(ProductModel);
-const blingService = new BlingService(blingIntegration, productRepository);
+router.get("/bling/authorize", blingController.authorize.bind(blingController));
 
-const webhookRepository = new WebhookRepository(WebhookModel);
-const pipeDriveService = new PipeDriveService(webhookRepository, blingService);
-
-const pipeDriveController = new PipeDriveController(pipeDriveService);
-const blingController = new BlingController(blingIntegration);
-
-router.get("/authorize", blingController.authorize);
-
-router.get(
-  "/webhook",
+router.post(
+  "/webhook/pipe-drive/webhook-deal-update",
   authorizationMidleware,
-  pipeDriveController.webookDealUpdate
+  pipeDriveController.webookDealUpdate.bind(pipeDriveController)
 );
 
 router.post(
   "/webhook/bling/authorization-code",
   authorizationMidleware,
-  blingController.getAuthorizationCode
+  blingController.getAuthorizationCode.bind(blingController)
+);
+
+router.get(
+  "/products/agregation",
+  productController.getManyProductAgregation.bind(productController)
 );
