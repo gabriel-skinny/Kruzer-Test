@@ -9,7 +9,7 @@ interface IInsertProductParams {
 }
 
 interface IBlingHttp {
-  requestInsertProduct(data: IInsertProductData): Promise<void>;
+  requestInsertProduct(data: IInsertProductData): Promise<{ id: string }>;
 }
 
 export interface IBillingService {
@@ -23,11 +23,16 @@ export class BlingService implements IBillingService {
   ) {}
 
   async insertProduct({ name, price, quantity }: IInsertProductParams) {
-    await this.BlingHttp.requestInsertProduct({
+    const { id } = await this.BlingHttp.requestInsertProduct({
       nome: name,
       preco: price,
     });
 
-    await this.productRepository.save({ name, price, quantity });
+    await this.productRepository.save({
+      name,
+      price,
+      quantity,
+      externalId: id,
+    });
   }
 }

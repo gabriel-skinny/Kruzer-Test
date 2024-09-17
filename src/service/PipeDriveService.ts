@@ -9,6 +9,9 @@ export class PipeDriveService {
   ) {}
 
   async handleUpdateDealEvent(data: IWebhookDealUpdateData) {
+    if (data.meta.action !== "updated" || data.event !== "updated.deal")
+      throw new Error("Not suported event");
+
     await this.webhookRepository.save({
       data,
       direction: "in",
