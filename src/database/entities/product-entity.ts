@@ -6,7 +6,10 @@ export interface IProductModel {
   price: number;
   productAgregationId: string;
   quantity: number;
-  externalId: string;
+  pipeDriveExternalId: string;
+  blingExternalId?: string;
+  errorOnCreation: boolean;
+  errorCreationMessage?: string;
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -17,7 +20,10 @@ export const ProductSchema: {
   name: String,
   price: Number,
   quantity: Number,
-  externalId: String,
+  errorOnCreation: Boolean,
+  errorCreationMessage: String,
+  pipeDriveExternalId: String,
+  blingExternalId: String,
   productAgregationId: Schema.ObjectId,
 };
 
