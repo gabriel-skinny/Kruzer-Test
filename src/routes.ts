@@ -25,6 +25,11 @@ router.post(
   pipeDriveController.webookDealUpdate.bind(pipeDriveController)
 );
 
+router.post(
+  "/pipe-drive/retry-product-creation",
+  pipeDriveController.retryProductCreation.bind(pipeDriveController)
+);
+
 router.get(
   "/products/agregation",
   productController.getManyProductAgregation.bind(productController)
