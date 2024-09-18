@@ -22,12 +22,6 @@ export class BlingController {
     if (!code || !state)
       return res.status(401).json({ message: "Unauthorized" });
 
-    if (
-      req.username != process.env.BLING_CLIENT_ID ||
-      req.password != process.env.BLING_CLIENT_SECRET
-    )
-      return res.status(401).json({ message: "Unauthorized" });
-
     try {
       await this.blingIntegration.authorizationCallBack({
         code: code as string,
