@@ -11,11 +11,11 @@ Integração entre Api do PipeDrive para inserir Deals quando estiverem ganhas c
 
 ## Rotas
 
-- `/webhook/pipe-drive/deal-update`: Rota disponibilizada para o pipedrive bater quando tiver atualização de uma oportunidade
-- `/bling/autenticate`: Fazer autentição no Bling com usuario
-- `/webhook/bling/authorization-code`: Recebe webhook com o authorization code
-- `/products/agregation`: Listagem dos produtos agregados por dia
-- `/pipe-drive/retry-product-creation`: Retentativa de recriar produtos para webhooks com erro em sua criação
+- `POST - /webhook/pipe-drive/deal-update`: Rota disponibilizada para o pipedrive bater quando tiver atualização de uma oportunidade
+- `GET - /bling/request-authorization-code`: Fazer autentição no Bling com usuario
+- `POST - /webhook/bling/authorization-code/callback`: Recebe webhook com o authorization code
+- `GET - /products/agregation`: Listagem dos produtos agregados por dia
+- `POST - /pipe-drive/retry-product-creation`: Retentativa de recriar produtos para webhooks com erro em sua criação
 
 ## Fluxo
 
