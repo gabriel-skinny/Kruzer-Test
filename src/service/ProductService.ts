@@ -143,7 +143,7 @@ export class ProductService {
           id: product._id,
           updateData: {
             errorOnCreation: false,
-            errorCreationMessage: undefined,
+            errorCreationMessage: null,
             blingExternalId: id,
           },
         });
