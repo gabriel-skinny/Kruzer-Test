@@ -38,7 +38,7 @@ export class BlingController {
     } catch (error) {
       console.log(error);
 
-      return res.json({ error: "Internal server error" }).status(200);
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 }
