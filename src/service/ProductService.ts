@@ -39,7 +39,11 @@ export class ProductService {
     let errorOnCreation: boolean = false;
     let errorCreationMessage: string | undefined;
 
-    if (await this.productRepository.existsByPipeDriveExternalId(id)) return;
+    if (await this.productRepository.existsByPipeDriveExternalId(id)) {
+      console.log("Product already created for that id");
+
+      return;
+    }
 
     try {
       const { id } = await this.BlingHttp.requestInsertProduct({
@@ -47,9 +51,6 @@ export class ProductService {
         preco: itemPrice,
         formato: IInsertProductFormatoEnum.SIMPLES,
         tipo: IInsertProductTipoEnum.SERVICO,
-        estoque: {
-          maximo: quantity,
-        },
       });
 
       blingExternalId = id;
@@ -136,9 +137,6 @@ export class ProductService {
           preco: product.price,
           formato: IInsertProductFormatoEnum.SIMPLES,
           tipo: IInsertProductTipoEnum.SERVICO,
-          estoque: {
-            maximo: product.quantity,
-          },
         });
 
         await this.productRepository.updateById({
