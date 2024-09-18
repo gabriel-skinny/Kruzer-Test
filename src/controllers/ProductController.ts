@@ -3,6 +3,7 @@ import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
 import { RequestMidleware } from "../midlewares/authorization-midleware";
 import { IProductAgregationModel } from "../database/entities/product-agregation";
 import { isValid } from "date-fns";
+import { makeProductAgregationViewModel } from "./viewModels/productAgregationViewModel";
 
 interface IProductService {
   getProductAgregations(filter?: {
@@ -38,20 +39,16 @@ export class ProductController {
       if (products.length == 0)
         return res.status(404).json({ message: "Products not found" });
 
-      const productsViewModel = products.map((product) => ({
-        sumValue: product.sumValue,
-        quantity: product.quantity,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-      }));
-
       return res
         .status(200)
-        .json({ message: "Product agregation", data: productsViewModel });
+        .json({
+          message: "Product agregation",
+          data: products.map(makeProductAgregationViewModel),
+        });
     } catch (err) {
       console.log(err);
 
-      return res.json({ message: "Internal server error" }).status(500);
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }
