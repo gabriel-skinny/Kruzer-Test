@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
+import { Response } from "express";
+
 import { RequestMidleware } from "../midlewares/authorization-midleware";
+import { IWebhookDealUpdateData } from "../service/interface";
 
 interface IPipeDriveService {
   handleUpdateDealEvent(data: IWebhookDealUpdateData): Promise<void>;

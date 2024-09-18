@@ -1,9 +1,7 @@
 import { IPipeDriveWebhookRepository } from "../database/repositories/pipeDriveWebhookRepository";
-import {
-  IGetProductsFromDealData,
-  IGetProductsFromDealResponse,
-} from "../integration/interface";
-import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
+import { IGetProductsFromDealData } from "../integration/interface";
+import { IWebhookDealUpdateData } from "./interface";
+
 import { IInsertProductParams } from "./ProductService";
 
 interface IProductService {
