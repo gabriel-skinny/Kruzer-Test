@@ -41,7 +41,8 @@ export class PipeDriveService {
             id: String(product.id),
             name: product.name,
             quantity: product.quantity,
-            price: product.sum,
+            itemPrice: product.item_price,
+            totalPrice: product.sum,
           });
         }
       } catch (error: any) {

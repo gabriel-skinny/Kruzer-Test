@@ -2,12 +2,17 @@ import { endOfDay, startOfDay } from "date-fns";
 import { IProductModel } from "../database/entities/product-entity";
 import { IProductAgregationRepository } from "../database/repositories/productAgregationRepository";
 import { IProductRepository } from "../database/repositories/productRepository";
-import { IInsertProductData } from "../integration/interface";
+import {
+  IInsertProductData,
+  IInsertProductFormatoEnum,
+  IInsertProductTipoEnum,
+} from "../integration/interface";
 import { IProductAgregationModel } from "../database/entities/product-agregation";
 
 export interface IInsertProductParams {
   id: string;
-  price: number;
+  totalPrice: number;
+  itemPrice: number;
   name: string;
   quantity: number;
 }
@@ -23,7 +28,13 @@ export class ProductService {
     private productAgregationRepository: IProductAgregationRepository
   ) {}
 
-  async insertProduct({ id, name, price, quantity }: IInsertProductParams) {
+  async insertProduct({
+    id,
+    name,
+    totalPrice,
+    itemPrice,
+    quantity,
+  }: IInsertProductParams) {
     let blingExternalId: string | undefined;
     let errorOnCreation: boolean = false;
     let errorCreationMessage: string | undefined;
@@ -33,9 +44,12 @@ export class ProductService {
     try {
       const { id } = await this.BlingHttp.requestInsertProduct({
         nome: name,
-        preco: price,
-        formato: "S",
-        tipo: "P",
+        preco: itemPrice,
+        formato: IInsertProductFormatoEnum.SIMPLES,
+        tipo: IInsertProductTipoEnum.SERVICO,
+        estoque: {
+          maximo: quantity,
+        },
       });
 
       blingExternalId = id;
@@ -45,11 +59,14 @@ export class ProductService {
       errorCreationMessage = error.message;
     }
 
-    const productAgregation = await this.agregateProduct({ price, quantity });
+    const productAgregation = await this.agregateProduct({
+      price: totalPrice,
+      quantity,
+    });
 
     await this.productRepository.save({
       name,
-      price,
+      price: itemPrice,
       quantity,
       blingExternalId,
       pipeDriveExternalId: id,
@@ -117,14 +134,18 @@ export class ProductService {
         const { id } = await this.BlingHttp.requestInsertProduct({
           nome: product.name,
           preco: product.price,
-          formato: "S",
-          tipo: "P",
+          formato: IInsertProductFormatoEnum.SIMPLES,
+          tipo: IInsertProductTipoEnum.SERVICO,
+          estoque: {
+            maximo: product.quantity,
+          },
         });
 
         await this.productRepository.updateById({
           id: product._id,
           updateData: {
             errorOnCreation: false,
+            errorCreationMessage: undefined,
             blingExternalId: id,
           },
         });
