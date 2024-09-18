@@ -4,10 +4,6 @@ import { RequestMidleware } from "../midlewares/authorization-midleware";
 
 interface IPipeDriveService {
   handleUpdateDealEvent(data: IWebhookDealUpdateData): Promise<void>;
-  retryProductCreation(): Promise<{
-    webhooksToRetry: number;
-    sucessCount: number;
-  }>;
 }
 
 export class PipeDriveController {
@@ -30,20 +26,6 @@ export class PipeDriveController {
       console.log(err);
 
       return res.status(500).json({ message: "Internal server error" });
-    }
-  }
-
-  async retryProductCreation(req: Request, res: Response) {
-    try {
-      const { sucessCount, webhooksToRetry } =
-        await this.pipeDriveService.retryProductCreation();
-
-      return res.status(200).json({
-        message: `Total webhooks: ${webhooksToRetry} and Webhooks sucessfully retried: ${sucessCount}`,
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: "Internal Server Error" });
     }
   }
 }
