@@ -6,6 +6,7 @@ import { IInsertProductData } from "../integration/interface";
 import { IProductAgregationModel } from "../database/entities/product-agregation";
 
 export interface IInsertProductParams {
+  id: string;
   price: number;
   name: string;
   quantity: number;
@@ -22,13 +23,27 @@ export class ProductService {
     private productAgregationRepository: IProductAgregationRepository
   ) {}
 
-  async insertProduct({ name, price, quantity }: IInsertProductParams) {
-    const { id } = await this.BlingHttp.requestInsertProduct({
-      nome: name,
-      preco: price,
-      formato: "S",
-      tipo: "P",
-    });
+  async insertProduct({ id, name, price, quantity }: IInsertProductParams) {
+    let blingExternalId: string | undefined;
+    let errorOnCreation: boolean = false;
+    let errorCreationMessage: string | undefined;
+
+    if (await this.productRepository.existsByPipeDriveExternalId(id)) return;
+
+    try {
+      const { id } = await this.BlingHttp.requestInsertProduct({
+        nome: name,
+        preco: price,
+        formato: "S",
+        tipo: "P",
+      });
+
+      blingExternalId = id;
+    } catch (error: any) {
+      console.log(error);
+      errorOnCreation = true;
+      errorCreationMessage = error.message;
+    }
 
     const productAgregation = await this.agregateProduct({ price, quantity });
 
@@ -36,8 +51,11 @@ export class ProductService {
       name,
       price,
       quantity,
-      externalId: id,
+      blingExternalId,
+      pipeDriveExternalId: id,
       productAgregationId: productAgregation._id,
+      errorOnCreation,
+      errorCreationMessage,
     });
   }
 
@@ -84,5 +102,42 @@ export class ProductService {
       await this.productAgregationRepository.findManyOnGroupDateRange(filter);
 
     return products;
+  }
+
+  async retryProductCreation(): Promise<{
+    totalProductToRetry: number;
+    sucessCount: number;
+  }> {
+    const productToRetry =
+      await this.productRepository.findManyWithErrorOnCreation();
+
+    let sucessCount = 0;
+    for (const product of productToRetry) {
+      try {
+        const { id } = await this.BlingHttp.requestInsertProduct({
+          nome: product.name,
+          preco: product.price,
+          formato: "S",
+          tipo: "P",
+        });
+
+        await this.productRepository.updateById({
+          id: product._id,
+          updateData: {
+            errorOnCreation: false,
+            blingExternalId: id,
+          },
+        });
+
+        sucessCount++;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    return {
+      sucessCount,
+      totalProductToRetry: productToRetry.length,
+    };
   }
 }
