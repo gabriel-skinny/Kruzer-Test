@@ -1,13 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 import { IWebhookDealUpdateDataInfo } from "../../interfaces/webhookDealUpdate";
+import { IGetProductsFromDealData } from "../../integration/interface";
 
 export interface IPipeDriveWebhookModel {
   _id: string;
   type: string;
   webhook_external_id: string;
-  data: IWebhookDealUpdateDataInfo;
-  errorOnProductCreation: boolean;
-  errorProductCreationMessage: String;
+  dealData: IWebhookDealUpdateDataInfo;
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -17,9 +16,7 @@ export const pipeDriveWebhookSchema: {
 } = {
   type: String,
   webhook_external_id: String,
-  errorProductCreationMessage: String,
-  errorOnProductCreation: Boolean,
-  data: Object,
+  dealData: Object,
 };
 
 export const PipeDriveWebhookModel = mongoose.model<IPipeDriveWebhookModel>(
