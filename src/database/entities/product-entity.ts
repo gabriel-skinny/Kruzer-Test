@@ -9,7 +9,7 @@ export interface IProductModel {
   pipeDriveExternalId: string;
   blingExternalId?: string;
   errorOnCreation: boolean;
-  errorCreationMessage?: string;
+  errorCreationMessage?: string | null;
   createdAt: Date;
   updatedAt?: Date;
 }
