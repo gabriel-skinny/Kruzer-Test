@@ -13,7 +13,7 @@ router.get(
   blingController.requestAuthorizationCode.bind(blingController)
 );
 
-router.post(
+router.get(
   "/webhook/bling/authorization-code/callback",
   authorizationMidleware,
   blingController.authorizationCodeCallBack.bind(blingController)
