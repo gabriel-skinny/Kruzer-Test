@@ -18,13 +18,11 @@ export class BasicAuthHelper {
   }: {
     username: string;
     password: string;
-  }): {
-    basicToken: string;
-  } {
+  }): string {
     const tokenString = `${username}:${password}`;
 
     const basicToken = Buffer.from(tokenString).toString("base64");
 
-    return { basicToken };
+    return basicToken;
   }
 }

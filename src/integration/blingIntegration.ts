@@ -6,6 +6,7 @@ import {
   IInsertProductResponse,
   IRequestAcesseTokenResponse,
 } from "./interface";
+import { BasicAuthHelper } from "../helpers/basicAuth";
 
 const EXPIRES_IN_DAYS_REFRESH_TOKEN = 30;
 
@@ -24,7 +25,10 @@ export class BlingIntegration {
   autentication?: IAutentication;
 
   constructor() {
-    this.basicToken = `${process.env.BLING_CLIENT_ID}:${process.env.BLING_CLIENT_SECRET}`;
+    this.basicToken = BasicAuthHelper.encode({
+      username: process.env.BLING_CLIENT_ID as string,
+      password: process.env.BLING_CLIENT_SECRET as string,
+    });
   }
 
   async checkAuthorization(): Promise<{ authorized: boolean }> {
