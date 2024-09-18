@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
 import { RequestMidleware } from "../midlewares/authorization-midleware";
 
@@ -20,7 +20,7 @@ export class PipeDriveController {
       req.username !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_USERNAME ||
       req.password !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_PASSWORD
     )
-      return res.json({ message: "Unauthorized" }).status(401);
+      return res.status(401).json({ message: "Unauthorized" });
 
     try {
       await this.pipeDriveService.handleUpdateDealEvent(body);
@@ -29,7 +29,7 @@ export class PipeDriveController {
     } catch (err) {
       console.log(err);
 
-      return res.json({ message: "Internal server error" }).status(500);
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
