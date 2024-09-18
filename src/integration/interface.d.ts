@@ -20,7 +20,7 @@ export const enum IInsertProductTipoEnum {
 }
 
 export const enum IInsertProductFormatoEnum {
-  SIMPLES = "P",
+  SIMPLES = "S",
   VARIACOES = "V",
   COMPOSICAO = "E",
 }

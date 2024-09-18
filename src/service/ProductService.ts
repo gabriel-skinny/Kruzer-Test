@@ -50,7 +50,7 @@ export class ProductService {
         nome: name,
         preco: itemPrice,
         formato: IInsertProductFormatoEnum.SIMPLES,
-        tipo: IInsertProductTipoEnum.SERVICO,
+        tipo: IInsertProductTipoEnum.PRODUTO,
       });
 
       blingExternalId = id;
@@ -136,7 +136,7 @@ export class ProductService {
           nome: product.name,
           preco: product.price,
           formato: IInsertProductFormatoEnum.SIMPLES,
-          tipo: IInsertProductTipoEnum.SERVICO,
+          tipo: IInsertProductTipoEnum.PRODUTO,
         });
 
         await this.productRepository.updateById({
