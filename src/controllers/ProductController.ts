@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
 import { RequestMidleware } from "../midlewares/authorization-midleware";
 import { IProductAgregationModel } from "../database/entities/product-agregation";
@@ -10,6 +10,10 @@ interface IProductService {
     startDate: Date;
     endDate: Date;
   }): Promise<IProductAgregationModel[]>;
+  retryProductCreation(): Promise<{
+    sucessCount: number;
+    totalProductToRetry: number;
+  }>;
 }
 
 export class ProductController {
@@ -39,16 +43,28 @@ export class ProductController {
       if (products.length == 0)
         return res.status(404).json({ message: "Products not found" });
 
-      return res
-        .status(200)
-        .json({
-          message: "Product agregation",
-          data: products.map(makeProductAgregationViewModel),
-        });
+      return res.status(200).json({
+        message: "Product agregation",
+        data: products.map(makeProductAgregationViewModel),
+      });
     } catch (err) {
       console.log(err);
 
       return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async retryProductCreation(req: Request, res: Response) {
+    try {
+      const { totalProductToRetry, sucessCount } =
+        await this.productService.retryProductCreation();
+
+      return res.status(200).json({
+        message: `Total products to retry: ${totalProductToRetry} and products sucessfully retried: ${sucessCount}`,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Internal Server Error" });
     }
   }
 }
