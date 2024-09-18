@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { IWebhookDealUpdateData } from "../interfaces/webhookDealUpdate";
 import { RequestMidleware } from "../midlewares/authorization-midleware";
 import { IProductAgregationModel } from "../database/entities/product-agregation";
 import { isValid } from "date-fns";

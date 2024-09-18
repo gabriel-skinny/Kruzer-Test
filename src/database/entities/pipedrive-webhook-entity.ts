@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IWebhookDealUpdateDataInfo } from "../../interfaces/webhookDealUpdate";
-import { IGetProductsFromDealData } from "../../integration/interface";
+import { IWebhookDealUpdateDataInfo } from "../../service/interface";
 
 export interface IPipeDriveWebhookModel {
   _id: string;
