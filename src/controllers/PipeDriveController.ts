@@ -12,12 +12,6 @@ export class PipeDriveController {
   async webookDealUpdate(req: RequestMidleware, res: Response) {
     const body = req.body as IWebhookDealUpdateData;
 
-    if (
-      req.username !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_USERNAME ||
-      req.password !== process.env.PIPEDRIVE_INTERNAL_WEBHOOK_PASSWORD
-    )
-      return res.status(401).json({ message: "Unauthorized" });
-
     try {
       await this.pipeDriveService.handleUpdateDealEvent(body);
 
