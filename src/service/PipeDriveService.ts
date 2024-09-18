@@ -23,15 +23,19 @@ export class PipeDriveService {
       throw new Error("Duplicated webhook");
 
     let errorCreatingProduct = false;
+    let errorCreatingProductMessage;
     if (data.status == "won" && previous.status == "open") {
       try {
+        const quantity = data.products_count || 1;
+
         await this.productService.insertProduct({
           name: data.title,
-          quantity: data.products_count,
+          quantity,
           price: data.value,
         });
-      } catch (error) {
+      } catch (error: any) {
         errorCreatingProduct = true;
+        errorCreatingProductMessage = error.message;
       }
     }
 
@@ -39,6 +43,7 @@ export class PipeDriveService {
       data,
       type: "changeDeal",
       errorOnProductCreation: errorCreatingProduct,
+      errorProductCreationMessage: errorCreatingProductMessage,
       webhook_external_id: meta.id,
     });
   }

@@ -7,6 +7,7 @@ export interface IPipeDriveWebhookModel {
   webhook_external_id: string;
   data: IWebhookDealUpdateDataInfo;
   errorOnProductCreation: boolean;
+  errorProductCreationMessage: String;
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -14,9 +15,10 @@ export interface IPipeDriveWebhookModel {
 export const pipeDriveWebhookSchema: {
   [key in keyof Omit<IPipeDriveWebhookModel, "_id" | "createdAt">]: any;
 } = {
-  errorOnProductCreation: Boolean,
   type: String,
   webhook_external_id: String,
+  errorProductCreationMessage: String,
+  errorOnProductCreation: Boolean,
   data: Object,
 };
 
