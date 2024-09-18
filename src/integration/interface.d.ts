@@ -14,14 +14,25 @@ export interface IInsertProductResponse {
   };
 }
 
+export enum IInsertProductTipoEnum {
+  PRODUTO = "P",
+  SERVICO = "S",
+}
+
+export enum IInsertProductFormatoEnum {
+  SIMPLES = "P",
+  VARIACOES = "V",
+  COMPOSICAO = "E",
+}
+
 export interface IInsertProductData {
   id?: number;
   nome: string;
   codigo?: string;
   preco: number;
-  tipo: "P" | "S" | "N";
+  tipo: IInsertProductTipoEnum;
   situacao?: string;
-  formato: "E" | "V" | "S";
+  formato: IInsertProductFormatoEnum;
   descricaoCurta?: string;
   dataValidade?: string;
   unidade?: string;
@@ -43,10 +54,10 @@ export interface IInsertProductData {
     id: number;
   };
   estoque?: {
-    minimo: number;
+    minimo?: number;
     maximo: number;
-    crossdocking: number;
-    localizacao: string;
+    crossdocking?: number;
+    localizacao?: string;
   };
   actionEstoque?: string;
   dimensoes?: {
