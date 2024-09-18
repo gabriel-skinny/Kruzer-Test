@@ -5,15 +5,12 @@ export interface IProductAgregationRepository {
   save(
     data: Omit<IProductAgregationModel, "_id" | "createdAt">
   ): Promise<IProductAgregationModel>;
-  findOnCreatedAtRange(
-    startDate: Date,
-    endDate: Date
-  ): Promise<IProductAgregationModel | null>;
+  findByGroupDate(date: Date): Promise<IProductAgregationModel | null>;
   updateById(data: {
     id: string;
     updateData: Partial<IProductAgregationModel>;
   }): Promise<void>;
-  findManyOnCreatedAtRange(filter?: {
+  findManyOnGroupDateRange(filter?: {
     startDate: Date;
     endDate: Date;
   }): Promise<IProductAgregationModel[]>;
@@ -42,13 +39,10 @@ export class ProductAgregationRepository
     await this.productAgregationModel.updateOne({ _id: id }, updateData);
   }
 
-  async findOnCreatedAtRange(
-    startDate: Date,
-    endDate: Date
-  ): Promise<IProductAgregationModel | null> {
+  async findByGroupDate(date: Date): Promise<IProductAgregationModel | null> {
     const productAgregation = await this.productAgregationModel
       .findOne({
-        createdAt: { $gte: startDate, $lt: endDate },
+        groupDate: date,
       })
       .lean();
 
@@ -57,7 +51,7 @@ export class ProductAgregationRepository
     return productAgregation;
   }
 
-  async findManyOnCreatedAtRange(filter?: {
+  async findManyOnGroupDateRange(filter?: {
     startDate: Date;
     endDate: Date;
   }): Promise<IProductAgregationModel[]> {
@@ -65,7 +59,7 @@ export class ProductAgregationRepository
 
     if (filter?.startDate && filter.endDate)
       where = {
-        createdAt: { $gte: filter.startDate, $lt: filter.endDate },
+        groupDate: { $gte: filter.startDate, $lt: filter.endDate },
       };
 
     const productAgregation = await this.productAgregationModel

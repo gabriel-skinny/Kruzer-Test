@@ -51,12 +51,9 @@ export class ProductService {
     let productAgregation: IProductAgregationModel | null;
 
     const starDateOfToday = startOfDay(Date.now());
-    const endDateOfToday = endOfDay(Date.now());
-    productAgregation =
-      await this.productAgregationRepository.findOnCreatedAtRange(
-        starDateOfToday,
-        endDateOfToday
-      );
+    productAgregation = await this.productAgregationRepository.findByGroupDate(
+      starDateOfToday
+    );
     if (productAgregation) {
       const newSumValue = productAgregation.sumValue + price * quantity;
 
@@ -72,6 +69,7 @@ export class ProductService {
       productAgregation = await this.productAgregationRepository.save({
         quantity: quantity,
         sumValue: sumValue,
+        groupDate: startOfDay(Date.now()),
       });
     }
 
@@ -83,7 +81,7 @@ export class ProductService {
     endDate: Date;
   }): Promise<IProductAgregationModel[]> {
     const products =
-      await this.productAgregationRepository.findManyOnCreatedAtRange(filter);
+      await this.productAgregationRepository.findManyOnGroupDateRange(filter);
 
     return products;
   }
