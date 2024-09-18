@@ -19,6 +19,5 @@ Integração entre Api do PipeDrive para inserir Deals quando estiverem ganhas c
 
 ## Fluxo
 
-- `/bling/request-authorization-code`: Vai ser redirecionado para logar com o seu usuario da bling para liberar o authenticationCode
-- `/webhook/bling/authorization-code/callback`: Receberá o authenticationCode da Bling, com o qual fará outra requisição para a bling pegando os tokens de acesso
-- `/webhook/pipe-drive/webhook-deal-update`: recebe as atualizações dos deals que acontecem no pipeDrive, e envia uma requisição para inserir produto na Bling caso ele tenha o status "won" e o ultimo status estava "open" e cria uma agregação de produtos ou atualiza uma já existente para aquele dia.
+- `/bling/request-authorization-code`: Vai ser redirecionado para logar com o seu usuario da bling para liberar o authenticationCode e chamará a rota `/webhook/bling/authorization-code/callback`, validando a aplicação e fazendo com que ela pega o acess token
+- Agora é so alterar algum Deal no PipeDrive para "Won" e verificar no Bling os produtos sendo inseridos.
