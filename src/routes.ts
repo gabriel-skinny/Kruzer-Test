@@ -15,7 +15,6 @@ router.get(
 
 router.get(
   "/webhook/bling/authorization-code/callback",
-  authorizationMidleware,
   blingController.authorizationCodeCallBack.bind(blingController)
 );
 
