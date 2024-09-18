@@ -14,12 +14,12 @@ export interface IInsertProductResponse {
   };
 }
 
-export enum IInsertProductTipoEnum {
+export const enum IInsertProductTipoEnum {
   PRODUTO = "P",
   SERVICO = "S",
 }
 
-export enum IInsertProductFormatoEnum {
+export const enum IInsertProductFormatoEnum {
   SIMPLES = "P",
   VARIACOES = "V",
   COMPOSICAO = "E",
