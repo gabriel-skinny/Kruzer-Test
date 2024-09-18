@@ -3,13 +3,14 @@ import { PipeDriveController } from "./controllers/PipeDriveController";
 import { ProductController } from "./controllers/ProductController";
 import { ProductAgregationModel } from "./database/entities/product-agregation";
 import { ProductModel } from "./database/entities/product-entity";
-import { WebhookModel } from "./database/entities/pipedrive-webhook-entity";
+
 import { ProductAgregationRepository } from "./database/repositories/productAgregationRepository";
 import { ProductRepository } from "./database/repositories/productRepository";
 import { WebhookRepository } from "./database/repositories/pipeDriveWebhookRepository";
 import { BlingIntegration } from "./integration/blingIntegration";
 import { PipeDriveService } from "./service/PipeDriveService";
 import { ProductService } from "./service/ProductService";
+import { PipeDriveWebhookModel } from "./database/entities/pipedrive-webhook-entity";
 
 export const makeControllersFactory = () => {
   const blingIntegration = new BlingIntegration();
@@ -24,7 +25,7 @@ export const makeControllersFactory = () => {
     productAgregationRepository
   );
 
-  const webhookRepository = new WebhookRepository(WebhookModel);
+  const webhookRepository = new WebhookRepository(PipeDriveWebhookModel);
   const pipeDriveService = new PipeDriveService(
     webhookRepository,
     productService
