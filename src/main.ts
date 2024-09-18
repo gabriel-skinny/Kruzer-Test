@@ -11,6 +11,7 @@ import { BlingIntegration } from "./integration/blingIntegration";
 import { PipeDriveService } from "./service/PipeDriveService";
 import { ProductService } from "./service/ProductService";
 import { PipeDriveWebhookModel } from "./database/entities/pipedrive-webhook-entity";
+import { PipeDriveIntegration } from "./integration/pipeDriveIntegration";
 
 export const makeControllersFactory = () => {
   const blingIntegration = new BlingIntegration();
@@ -26,9 +27,11 @@ export const makeControllersFactory = () => {
   );
 
   const webhookRepository = new WebhookRepository(PipeDriveWebhookModel);
+  const pipeDriveIntegration = new PipeDriveIntegration();
   const pipeDriveService = new PipeDriveService(
     webhookRepository,
-    productService
+    productService,
+    pipeDriveIntegration
   );
 
   const pipeDriveController = new PipeDriveController(pipeDriveService);
