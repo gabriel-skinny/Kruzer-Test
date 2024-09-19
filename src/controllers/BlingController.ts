@@ -19,9 +19,6 @@ export class BlingController {
   async authorizationCodeCallBack(req: RequestMidleware, res: Response) {
     const { code, state } = req.query;
 
-    if (!code || !state)
-      return res.status(401).json({ message: "Unauthorized" });
-
     try {
       await this.blingIntegration.authorizationCallBack({
         code: code as string,
