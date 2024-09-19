@@ -26,7 +26,7 @@ const makeSut = () => {
   };
 };
 
-describe("PipeDriveService", () => {
+describe("PipeDriveService HandleUpdateEvent method", () => {
   it("Should create a webhook and request to insert products", async () => {
     const {
       pipeDriveService,
