@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   IGetProductsFromDealData,
   IGetProductsFromDealResponse,
-} from "./interface";
+} from "../services/protocols/integrations/pipeDriveIntegration";
 
 export class PipeDriveIntegration {
   async getProductsFromDeal(
