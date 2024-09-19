@@ -54,7 +54,7 @@ export class ProductService implements IProductService {
     }
 
     const { productAgregationId } = await this.agregateProduct({
-      price: totalPrice,
+      sumPrice: totalPrice,
       quantity,
     });
 
@@ -73,10 +73,10 @@ export class ProductService implements IProductService {
   }
 
   private async agregateProduct({
-    price,
+    sumPrice,
     quantity,
   }: {
-    price: number;
+    sumPrice: number;
     quantity: number;
   }): Promise<{ productAgregationId: string }> {
     let productAgregation: IProductAgregationModel | null;
@@ -86,7 +86,7 @@ export class ProductService implements IProductService {
       starDateOfToday
     );
     if (productAgregation) {
-      const newSumValue = productAgregation.sumValue + price * quantity;
+      const newSumValue = productAgregation.sumValue + sumPrice;
 
       await this.productAgregationRepository.updateById({
         id: productAgregation._id,
@@ -96,7 +96,7 @@ export class ProductService implements IProductService {
         },
       });
     } else {
-      const sumValue = price * quantity;
+      const sumValue = sumPrice;
       productAgregation = await this.productAgregationRepository.save({
         quantity: quantity,
         sumValue: sumValue,
