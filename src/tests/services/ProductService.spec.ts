@@ -110,13 +110,8 @@ describe("ProductService", () => {
     });
   });
   describe("RetryProductCreation methdod", () => {
-    it.only("Should retry all products with errorOnCreation and update error to false", async () => {
-      const {
-        productService,
-        productRepository,
-        blingIntegration,
-        productAgregationRepository,
-      } = makeSut();
+    it("Should retry all products with errorOnCreation and update error to false", async () => {
+      const { productService, productRepository, blingIntegration } = makeSut();
 
       const productData = {
         errorOnCreation: true,
@@ -149,6 +144,42 @@ describe("ProductService", () => {
           blingExternalId,
         });
       }
+    });
+
+    it("Should not update product when an error ocurrs on requestInsertion", async () => {
+      const { productService, productRepository, blingIntegration } = makeSut();
+
+      const productData = {
+        errorOnCreation: true,
+        errorCreationMessage: "error",
+      };
+      const productsWithError = [
+        makeProductModel(productData),
+        makeProductModel(productData),
+      ];
+      for (const product of productsWithError)
+        await productRepository.save(product);
+
+      const blingExternalId = "blingId";
+      blingIntegration.requestInsertProduct = jest
+        .fn()
+        .mockImplementationOnce(() => {})
+        .mockReturnValueOnce({
+          id: blingExternalId,
+        });
+
+      const response = await productService.retryProductCreation();
+
+      expect(response).toStrictEqual({
+        sucessCount: productsWithError.length - 1,
+        totalProductToRetry: productsWithError.length,
+      });
+      expect(productRepository.database[0]).toMatchObject(productData);
+      expect(productRepository.database[1]).toMatchObject({
+        errorOnCreation: false,
+        errorCreationMessage: null,
+        blingExternalId,
+      });
     });
   });
 });

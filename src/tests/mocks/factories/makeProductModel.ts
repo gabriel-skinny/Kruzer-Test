@@ -1,10 +1,11 @@
 import { IProductModel } from "../../../database/entities/product-entity";
+import { randomUUID } from "crypto";
 
 export const makeProductModel = (
   data?: Partial<IProductModel>
 ): IProductModel => {
   return {
-    _id: "uniqueId",
+    _id: randomUUID(),
     name: "productName",
     errorOnCreation: false,
     errorCreationMessage: undefined,
