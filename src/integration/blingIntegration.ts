@@ -9,6 +9,7 @@ import {
   IInsertProductResponse,
   IRequestAcesseTokenResponse,
 } from "../services/protocols/integrations/blingIntegration";
+import { IHttpAdapter } from "../services/protocols/adapters/httpAdapter";
 
 const EXPIRES_IN_DAYS_REFRESH_TOKEN = 30;
 
@@ -18,7 +19,7 @@ export class BlingIntegration {
   private basicToken: string;
   private autentication?: IAutentication;
 
-  constructor() {
+  constructor(private httpAdapter: IHttpAdapter) {
     this.basicToken = BasicAuthHelper.encode({
       username: process.env.BLING_CLIENT_ID as string,
       password: process.env.BLING_CLIENT_SECRET as string,
@@ -84,21 +85,21 @@ export class BlingIntegration {
   async requestAcessToken(
     authorizationType: "refresh_token" | "authorization_code"
   ): Promise<IRequestAcesseTokenResponse> {
-    const { data } = await axios.post<IRequestAcesseTokenResponse>(
-      `${process.env.BLING_PROD_BASE_URL}/Api/v3/oauth/token`,
-      {
+    const data = await this.httpAdapter.post<IRequestAcesseTokenResponse>({
+      url: `${process.env.BLING_PROD_BASE_URL}/Api/v3/oauth/token`,
+      bodyData: {
         grant_type: authorizationType,
         code:
           authorizationType == "authorization_code"
             ? this.authorizationCode
             : this.autentication?.refreshToken,
       },
-      {
+      options: {
         headers: {
           Authorization: `Basic ${this.basicToken}`,
         },
-      }
-    );
+      },
+    });
 
     return data;
   }
@@ -111,16 +112,16 @@ export class BlingIntegration {
     if (!authorized)
       throw new Error("Can not make request because not authorized");
 
-    const response = await axios.post<IInsertProductResponse>(
-      `${process.env.BLING_PROD_BASE_URL}/Api/v3/produtos`,
-      productData,
-      {
+    const response = await this.httpAdapter.post<IInsertProductResponse>({
+      url: `${process.env.BLING_PROD_BASE_URL}/Api/v3/produtos`,
+      bodyData: productData,
+      options: {
         headers: {
           Authorization: `Bearer ${this.autentication?.acessToken}`,
         },
-      }
-    );
+      },
+    });
 
-    return { id: String(response.data.data.id) };
+    return { id: String(response.data.id) };
   }
 }
