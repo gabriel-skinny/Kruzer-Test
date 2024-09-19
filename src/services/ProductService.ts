@@ -121,11 +121,11 @@ export class ProductService implements IProductService {
     totalProductToRetry: number;
     sucessCount: number;
   }> {
-    const productToRetry =
+    const productsToRetry =
       await this.productRepository.findManyWithErrorOnCreation();
 
     let sucessCount = 0;
-    for (const product of productToRetry) {
+    for (const product of productsToRetry) {
       try {
         const { id } = await this.blingIntegration.requestInsertProduct({
           nome: product.name,
@@ -151,7 +151,7 @@ export class ProductService implements IProductService {
 
     return {
       sucessCount,
-      totalProductToRetry: productToRetry.length,
+      totalProductToRetry: productsToRetry.length,
     };
   }
 }
