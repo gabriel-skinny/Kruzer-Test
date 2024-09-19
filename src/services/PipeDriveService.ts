@@ -1,18 +1,10 @@
-import { IPipeDriveWebhookRepository } from "../database/repositories/pipeDriveWebhookRepository";
-import { IGetProductsFromDealData } from "../integration/interface";
-import { IWebhookDealUpdateData } from "./interface";
+import { IPipeDriveIntegration } from "./protocols/integrations/pipeDriveIntegration";
+import { IWebhookDealUpdateData } from "./protocols/integrations/webhookDealUpdate";
+import { IPipeDriveWebhookRepository } from "./protocols/repositories/pipeDriveWebhookRepository";
+import { IPipeDriveService } from "./protocols/services/pipeDriveService";
+import { IProductService } from "./protocols/services/productService";
 
-import { IInsertProductParams } from "./ProductService";
-
-interface IProductService {
-  insertProduct(data: IInsertProductParams): Promise<void>;
-}
-
-interface IPipeDriveIntegration {
-  getProductsFromDeal(dealId: string): Promise<IGetProductsFromDealData[]>;
-}
-
-export class PipeDriveService {
+export class PipeDriveService implements IPipeDriveService {
   constructor(
     private pipedriveWebhookRepository: IPipeDriveWebhookRepository,
     private productService: IProductService,
@@ -23,7 +15,7 @@ export class PipeDriveService {
     data,
     meta,
     previous,
-  }: IWebhookDealUpdateData) {
+  }: IWebhookDealUpdateData): Promise<void> {
     if (meta.action !== "change") throw new Error("Not suported action");
 
     if (await this.pipedriveWebhookRepository.existsByExternalId(meta.id))

@@ -8,8 +8,8 @@ import { ProductAgregationRepository } from "./database/repositories/productAgre
 import { ProductRepository } from "./database/repositories/productRepository";
 import { WebhookRepository } from "./database/repositories/pipeDriveWebhookRepository";
 import { BlingIntegration } from "./integration/blingIntegration";
-import { PipeDriveService } from "./service/PipeDriveService";
-import { ProductService } from "./service/ProductService";
+import { PipeDriveService } from "./services/PipeDriveService";
+import { ProductService } from "./services/ProductService";
 import { PipeDriveWebhookModel } from "./database/entities/pipedrive-webhook-entity";
 import { PipeDriveIntegration } from "./integration/pipeDriveIntegration";
 
