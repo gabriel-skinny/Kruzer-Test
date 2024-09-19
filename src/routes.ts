@@ -12,10 +12,10 @@ const { blingController, pipeDriveController, productController } =
   makeControllersFactory();
 
 router.get(
-  "/bling/request-authorization-code",
+  "/bling/authorization-code-url",
   authorizationMidleware,
   internalAccountValidationMiddleware,
-  blingController.requestAuthorizationCode.bind(blingController)
+  blingController.getAuthorizationCodeUrl.bind(blingController)
 );
 
 router.get(
