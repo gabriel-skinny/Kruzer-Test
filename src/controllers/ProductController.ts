@@ -1,19 +1,8 @@
+import { isValid } from "date-fns";
 import { Request, Response } from "express";
 import { RequestMidleware } from "../midlewares/authorization-midleware";
-import { IProductAgregationModel } from "../database/entities/product-agregation";
-import { isValid } from "date-fns";
+import { IProductService } from "../services/protocols/services/productService";
 import { makeProductAgregationViewModel } from "./viewModels/productAgregationViewModel";
-
-interface IProductService {
-  getProductAgregations(filter?: {
-    startDate: Date;
-    endDate: Date;
-  }): Promise<IProductAgregationModel[]>;
-  retryProductCreation(): Promise<{
-    sucessCount: number;
-    totalProductToRetry: number;
-  }>;
-}
 
 export class ProductController {
   constructor(private productService: IProductService) {}

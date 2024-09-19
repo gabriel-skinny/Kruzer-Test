@@ -1,28 +1,22 @@
 import axios from "axios";
 import { randomUUID } from "crypto";
 import { addDays, addSeconds, isAfter, isBefore } from "date-fns";
+
+import { BasicAuthHelper } from "../helpers/basicAuth";
 import {
+  IAutentication,
   IInsertProductData,
   IInsertProductResponse,
   IRequestAcesseTokenResponse,
-} from "./interface";
-import { BasicAuthHelper } from "../helpers/basicAuth";
+} from "../services/protocols/integrations/blingIntegration";
 
 const EXPIRES_IN_DAYS_REFRESH_TOKEN = 30;
 
-interface IAutentication {
-  acessToken: string;
-  refreshToken: string;
-  processedDate: Date;
-  acessTokenExpireDate: Date;
-  refreshTokenExpireDate: Date;
-}
-
 export class BlingIntegration {
-  authorizationState?: string;
-  authorizationCode?: string;
-  basicToken: string;
-  autentication?: IAutentication;
+  private authorizationState?: string;
+  private authorizationCode?: string;
+  private basicToken: string;
+  private autentication?: IAutentication;
 
   constructor() {
     this.basicToken = BasicAuthHelper.encode({

@@ -1,12 +1,6 @@
 import { Model } from "mongoose";
 import { IPipeDriveWebhookModel } from "../entities/pipedrive-webhook-entity";
-
-export interface IPipeDriveWebhookRepository {
-  save(data: Omit<IPipeDriveWebhookModel, "_id" | "createdAt">): Promise<void>;
-  existsByExternalId(
-    externalId: string
-  ): Promise<IPipeDriveWebhookModel | null>;
-}
+import { IPipeDriveWebhookRepository } from "../../services/protocols/repositories/pipeDriveWebhookRepository";
 
 export class WebhookRepository implements IPipeDriveWebhookRepository {
   constructor(private pipeDriveWebhookModel: Model<IPipeDriveWebhookModel>) {}

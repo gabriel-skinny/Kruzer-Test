@@ -1,24 +1,16 @@
 import { Model } from "mongoose";
 import { IProductModel } from "../entities/product-entity";
-
-export interface IProductRepository {
-  save(data: Omit<IProductModel, "_id" | "createdAt">): Promise<void>;
-  findManyWithErrorOnCreation(): Promise<IProductModel[]>;
-  updateById({
-    id,
-    updateData,
-  }: {
-    id: string;
-    updateData: Partial<IProductModel>;
-  }): Promise<void>;
-  existsByPipeDriveExternalId(id: string): Promise<boolean>;
-}
+import { IProductRepository } from "../../services/protocols/repositories/productRepository";
 
 export class ProductRepository implements IProductRepository {
   constructor(private productModel: Model<IProductModel>) {}
 
-  async save(data: Omit<IProductModel, "_id" | "createdAt">): Promise<void> {
-    await this.productModel.create(data);
+  async save(
+    data: Omit<IProductModel, "_id" | "createdAt">
+  ): Promise<IProductModel> {
+    const product = await this.productModel.create(data);
+
+    return product;
   }
 
   async findManyWithErrorOnCreation(): Promise<IProductModel[]> {

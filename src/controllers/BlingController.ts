@@ -1,10 +1,6 @@
 import { Request, Response } from "express";
 import { RequestMidleware } from "../midlewares/authorization-midleware";
-
-interface IBlingIntegration {
-  makeAuthorizationCodeUrl(): { authorizationCodeUrl: string };
-  authorizationCallBack(data: { state: string; code: string }): Promise<void>;
-}
+import { IBlingIntegration } from "../services/protocols/integrations/blingIntegration";
 
 export class BlingController {
   constructor(private blingIntegration: IBlingIntegration) {}

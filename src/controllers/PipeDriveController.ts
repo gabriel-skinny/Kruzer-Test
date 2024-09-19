@@ -1,11 +1,8 @@
 import { Response } from "express";
 
 import { RequestMidleware } from "../midlewares/authorization-midleware";
-import { IWebhookDealUpdateData } from "../service/interface";
-
-interface IPipeDriveService {
-  handleUpdateDealEvent(data: IWebhookDealUpdateData): Promise<void>;
-}
+import { IPipeDriveService } from "../services/protocols/services/pipeDriveService";
+import { IWebhookDealUpdateData } from "../services/protocols/integrations/webhookDealUpdate";
 
 export class PipeDriveController {
   constructor(private pipeDriveService: IPipeDriveService) {}
