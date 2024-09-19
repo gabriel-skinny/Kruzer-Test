@@ -40,7 +40,9 @@ export class ProductController {
       const products = await this.productService.getProductAgregations(filter);
 
       if (products.length == 0)
-        return res.status(404).json({ message: "Products not found" });
+        return res
+          .status(404)
+          .json({ message: "Product agregation not found" });
 
       return res.status(200).json({
         message: "Product agregation",
