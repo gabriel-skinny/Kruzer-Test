@@ -12,9 +12,11 @@ import { PipeDriveService } from "./services/PipeDriveService";
 import { ProductService } from "./services/ProductService";
 import { PipeDriveWebhookModel } from "./database/entities/pipedrive-webhook-entity";
 import { PipeDriveIntegration } from "./integration/pipeDriveIntegration";
+import { AxiosAdapter } from "./adapters/axiosAdapter";
 
 export const makeControllersFactory = () => {
-  const blingIntegration = new BlingIntegration();
+  const axiosAdapter = new AxiosAdapter();
+  const blingIntegration = new BlingIntegration(axiosAdapter);
 
   const productRepository = new ProductRepository(ProductModel);
   const productAgregationRepository = new ProductAgregationRepository(
@@ -27,7 +29,7 @@ export const makeControllersFactory = () => {
   );
 
   const webhookRepository = new WebhookRepository(PipeDriveWebhookModel);
-  const pipeDriveIntegration = new PipeDriveIntegration();
+  const pipeDriveIntegration = new PipeDriveIntegration(axiosAdapter);
   const pipeDriveService = new PipeDriveService(
     webhookRepository,
     productService,

@@ -3,8 +3,11 @@ import {
   IGetProductsFromDealData,
   IGetProductsFromDealResponse,
 } from "../services/protocols/integrations/pipeDriveIntegration";
+import { IHttpAdapter } from "../services/protocols/adapters/httpAdapter";
 
 export class PipeDriveIntegration {
+  constructor(private httpAdapter: IHttpAdapter) {}
+
   async getProductsFromDeal(
     dealId: string
   ): Promise<IGetProductsFromDealData[]> {
@@ -14,16 +17,16 @@ export class PipeDriveIntegration {
     const allProducts: IGetProductsFromDealData[] = [];
 
     while (hasNext) {
-      const { data } = await axios.get<IGetProductsFromDealResponse>(
-        `${process.env.PIPEDRIVE_PROD_URL}/deals/${dealId}/products`,
-        {
+      const data = await this.httpAdapter.get<IGetProductsFromDealResponse>({
+        url: `${process.env.PIPEDRIVE_PROD_URL}/deals/${dealId}/products`,
+        options: {
           params: {
             api_token: process.env.PIPEDRIVE_API_TOKEN,
             start: cursor,
             limit: limit,
           },
-        }
-      );
+        },
+      });
 
       allProducts.push(...data.data);
       hasNext = data.additional_data.pagination.more_items_in_collection;
