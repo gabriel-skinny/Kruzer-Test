@@ -109,4 +109,46 @@ describe("ProductService", () => {
       });
     });
   });
+  describe("RetryProductCreation methdod", () => {
+    it.only("Should retry all products with errorOnCreation and update error to false", async () => {
+      const {
+        productService,
+        productRepository,
+        blingIntegration,
+        productAgregationRepository,
+      } = makeSut();
+
+      const productData = {
+        errorOnCreation: true,
+        errorCreationMessage: "error",
+      };
+      const productsWithError = [
+        makeProductModel(productData),
+        makeProductModel(productData),
+        makeProductModel(productData),
+      ];
+      for (const product of productsWithError)
+        await productRepository.save(product);
+
+      const blingExternalId = "blingId";
+      blingIntegration.requestInsertProduct = jest
+        .fn()
+        .mockReturnValue({ id: blingExternalId });
+
+      const response = await productService.retryProductCreation();
+
+      expect(response).toStrictEqual({
+        sucessCount: productsWithError.length,
+        totalProductToRetry: productsWithError.length,
+      });
+
+      for (const index in productsWithError) {
+        expect(productRepository.database[index]).toMatchObject({
+          errorOnCreation: false,
+          errorCreationMessage: null,
+          blingExternalId,
+        });
+      }
+    });
+  });
 });
