@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/index.js",
-    "start:dev": "ts-node-dev src/index.ts --watch"
+    "start:dev": "ts-node-dev src/index.ts --watch",
+    "test": "jest --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +23,10 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.13",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.5",
+    "ts-jest": "^29.2.5",
     "ts-node-dev": "^2.0.0"
   }
 }
